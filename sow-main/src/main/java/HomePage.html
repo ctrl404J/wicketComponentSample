@@ -1,0 +1,30 @@
+<!DOCTYPE HTML>
+<html xmlns:wicket>
+<head>
+<meta charset="UTF-8" />
+</head>
+<body>
+	<form wicket:id="form">
+
+		1.name:<input type="text" wicket:id="name" /><br>
+
+		2.level:<select wicket:id="level">
+			<option>1級</option>
+			<option>2級</option>
+			<option>3級</option>
+		</select><br/>
+
+		3.type:<div wicket:id="type">
+		<input type="radio" wicket:id="type1">役員／
+		<input type="radio" wicket:id="type2">社員／
+		<input type="radio" wicket:id="type3">バイト</div>
+		<br/>
+
+		4.admin:<input type="checkbox" wicket:id="admin" />管理職<br>
+
+        <input type="submit" value="登録" wicket:id="submit" />
+	</form>
+
+	<a wicket:id="menu">menu</a>
+</body>
+</html>

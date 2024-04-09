@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<style>
+        table {
+            border-collapse: collapse;
+        }
+        td, th {
+            border: 1px solid lightgreen;
+            padding: 8px;
+            cursor: pointer; /* 마우스 커서를 포인터로 변경하여 클릭 가능한 것처럼 보이도록 설정 */
+        }
+    </style>
+</head>
+<body>
+	<div class="container">
+    <form wicket:id="form" role="form">
+        <table id="myTable">
+            <thead>
+                <th>name</th>
+                <th>age</th>
+                <th>tel</th>
+            </thead>
+            <tbody>
+                <tr wicket:id="listView">
+                    <td><span wicket:id="myName"></span></td>
+                    <td><span wicket:id="myAge"></span></td>
+                    <td><span wicket:id="myTel"></span></td>
+                </tr>
+            </tbody>
+        </table>
+        <br />
+        <br />
+        이름: <input type="text" id="nameInput" wicket:id="nameInput"><br>
+        나이: <input type="text" id="ageInput" wicket:id="ageInput"><br>
+        전화: <input type="text" id="telInput" wicket:id="telInput"><br>
+        <button wicket:id="updateBtn">확인</button>
+    </form>
+</div>
+
+<script>
+    // 테이블 요소를 가져옵니다.
+    var table = document.getElementById("myTable");
+
+    // 테이블의 각 로우에 클릭 이벤트를 추가합니다.
+    for (var i = 0; i < table.rows.length; i++) {
+        table.rows[i].onclick = function() {
+            // 클릭된 로우의 내용을 가져옵니다.
+            var cells = this.cells;
+            var name = cells[0].getElementsByTagName('span')[0].innerText.trim(); // 첫 번째 셀의 내용을 이름으로 가져옵니다.
+            var age = cells[1].getElementsByTagName('span')[0].innerText.trim(); // 두 번째 셀의 내용을 나이로 가져옵니다.
+            var tel = cells[2].getElementsByTagName('span')[0].innerText.trim(); // 세 번째 셀의 내용을 전화로 가져옵니다.
+            
+            // 각각의 입력 필드에 가져온 값을 설정합니다.
+            document.getElementById("nameInput").value = name;
+            document.getElementById("ageInput").value = age;
+            document.getElementById("telInput").value = tel;
+        };
+    }
+</script>
+</body>
+</html>
