@@ -1,0 +1,108 @@
+MyOption 클래스는 두 개의 변수로 구성된 옵션을 포함합니다.
+DropDownChoice의 커스텀 렌더러를 사용하여 옵션이 두 변수의 값으로 구성된 텍스트로 표시됩니다.
+
+  MyOption 클래스
+  public class MyOption {
+    private String value1;
+    private String value2;
+
+    public MyOption(String value1, String value2) {
+        this.value1 = value1;
+        this.value2 = value2;
+    }
+
+    public String getValue1() {
+        return value1;
+    }
+
+    public String getValue2() {
+        return value2;
+    }
+
+    @Override
+    public String toString() {
+        return value1 + " - " + value2;
+    }
+}
+
+Wicket 페이지
+  import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.util.ListModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class MyPage extends WebPage {
+    private static final long serialVersionUID = 1L;
+
+    public MyPage() {
+        // Sample list of MyOption objects
+        List<MyOption> options = new ArrayList<>();
+        options.add(new MyOption("Option 1", "Detail 1"));
+        options.add(new MyOption("Option 2", "Detail 2"));
+        options.add(new MyOption("Option 3", "Detail 3"));
+
+        // Model to hold the selected option
+        Model<MyOption> selectedOptionModel = new Model<>();
+
+        // DropDownChoice with custom renderer to display value1 and value2
+        DropDownChoice<MyOption> dropDownChoice = new DropDownChoice<>(
+            "dropdown",
+            selectedOptionModel,
+            new ListModel<>(options),
+            new org.apache.wicket.markup.html.form.IChoiceRenderer<>() {
+                @Override
+                public Object getDisplayValue(MyOption option) {
+                    return option.getValue1() + " - " + option.getValue2();
+                }
+
+                @Override
+                public String getIdValue(MyOption option, int index) {
+                    return String.valueOf(index);
+                }
+            }
+        );
+
+        add(dropDownChoice);
+
+        // Example of using the selected option to find a specific value and set it as the default selection
+        MyOption defaultOption = options.stream()
+            .filter(option -> "Option 2".equals(option.getValue1()))
+            .findFirst()
+            .orElse(null);
+
+        if (defaultOption != null) {
+            selectedOptionModel.setObject(defaultOption);
+        }
+    }
+}
+
+HTML 마크업
+  <!DOCTYPE html>
+<html xmlns:wicket="http://wicket.apache.org">
+<head>
+    <title>Dropdown Example</title>
+</head>
+<body>
+    <form wicket:id="form">
+        <select wicket:id="dropdown"></select>
+    </form>
+</body>
+</html>
+
+설명
+MyOption 클래스:
+
+value1과 value2라는 두 개의 변수로 구성됩니다.
+toString() 메서드를 오버라이드하여 value1과 value2를 연결한 문자열을 반환합니다.
+Wicket 페이지 (MyPage 클래스):
+
+DropDownChoice는 MyOption 객체들의 리스트를 표시합니다.
+커스텀 렌더러를 사용하여 MyOption 객체의 value1과 value2 값을 표시합니다.
+특정 조건에 따라 기본 선택 옵션을 설정합니다 (예: value1이 "Option 2"인 객체).
+HTML 마크업:
+
+DropDownChoice가 렌더링될 select 요소를 정의합니다.
+이 코드는 하나의 Option이 두 개의 변수로 구성되도록 하여, DropDownChoice에 표시되는 값을 value1과 value2의 결합으로 설정합니다. 나중에 특정 옵션을 찾아서 기본 선택으로 설정하는 기능도 포함되어 있습니다.
