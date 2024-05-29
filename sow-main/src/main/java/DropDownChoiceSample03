@@ -1,0 +1,127 @@
+1. NamePair 클래스 정의
+먼저, NamePair 클래스를 정의합니다.
+public class NamePair {
+    private String ginkoName;
+    private String ginkoCode;
+
+    public NamePair(String ginkoName, String ginkoCode) {
+        this.ginkoName = ginkoName;
+        this.ginkoCode = ginkoCode;
+    }
+
+    public String getGinkoName() {
+        return ginkoName;
+    }
+
+    public void setGinkoName(String ginkoName) {
+        this.ginkoName = ginkoName;
+    }
+
+    public String getGinkoCode() {
+        return ginkoCode;
+    }
+
+    public void setGinkoCode(String ginkoCode) {
+        this.ginkoCode = ginkoCode;
+    }
+
+    @Override
+    public String toString() {
+        return ginkoCode + " " + ginkoName;
+    }
+}
+
+
+2. Wicket 페이지에서 DropDownChoice 설정
+이제 Wicket 페이지에서 DropDownChoice를 설정하고, Model을 사용하여 기본 선택 값을 설정하는 방법을 설명하겠습니다.
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.DropDownChoice;
+import org.apache.wicket.model.Model;
+import org.apache.wicket.model.PropertyModel;
+import org.apache.wicket.model.util.ListModel;
+
+import java.util.ArrayList;
+import java.util.List;
+
+public class GinkoPage extends WebPage {
+    private static final long serialVersionUID = 1L;
+    private Model<NamePair> selectedGinkoModel;
+
+    public GinkoPage() {
+        // 서비스에서 Ginko 목록을 가져옴
+        List<Ginko> ginkoList = service.getGinkoList();
+        List<NamePair> ginkoSelectList = new ArrayList<>();
+
+        for (Ginko ginko : ginkoList) {
+            ginkoSelectList.add(new NamePair(ginko.getGinkoName(), ginko.getGinkoCode()));
+        }
+
+        // 사용자의 은행 정보를 가져옴
+        Ginko ginkoInfo = service.getGinkoInfo("peopleNum");
+        String userGinkoCode = ginkoInfo.getGinkoCode();
+
+        // DropDownChoice 설정
+        selectedGinkoModel = new Model<>();
+        DropDownChoice<NamePair> ginkoSelect = new DropDownChoice<>(
+            "ginkoSelect",
+            selectedGinkoModel,
+            new ListModel<>(ginkoSelectList),
+            new org.apache.wicket.markup.html.form.IChoiceRenderer<>() {
+                @Override
+                public Object getDisplayValue(NamePair namePair) {
+                    return namePair.getGinkoCode() + " " + namePair.getGinkoName();
+                }
+
+                @Override
+                public String getIdValue(NamePair namePair, int index) {
+                    return namePair.getGinkoCode();
+                }
+            }
+        );
+
+        // 사용자의 은행 코드와 일치하는 옵션을 찾아서 기본 선택 값으로 설정
+        for (NamePair namePair : ginkoSelectList) {
+            if (namePair.getGinkoCode().equals(userGinkoCode)) {
+                selectedGinkoModel.setObject(namePair);
+                break;
+            }
+        }
+
+        add(ginkoSelect);
+    }
+}
+
+
+3. HTML 마크업
+HTML 파일 (GinkoPage.html)에서 DropDownChoice를 정의합니다.
+<!DOCTYPE html>
+<html xmlns:wicket="http://www.w3.org/1999/xhtml">
+<head>
+    <title>Ginko Dropdown</title>
+</head>
+<body>
+    <form wicket:id="form">
+        <select wicket:id="ginkoSelect"></select>
+    </form>
+</body>
+</html>
+
+설명
+NamePair 클래스:
+
+ginkoName과 ginkoCode라는 두 개의 변수를 저장합니다.
+toString() 메서드를 오버라이드하여 ginkoCode와 ginkoName을 결합한 문자열을 반환합니다.
+GinkoPage 클래스:
+
+service.getGinkoList()를 호출하여 은행 목록을 가져옵니다.
+service.getGinkoInfo("peopleNum")를 호출하여 특정 사용자의 은행 정보를 가져옵니다.
+selectedGinkoModel을 Model로 설정합니다.
+DropDownChoice를 생성하고, IChoiceRenderer를 사용하여 NamePair 객체의 표시 값을 ginkoCode와 ginkoName의 결합으로 설정합니다.
+사용자의 은행 코드와 일치하는 옵션을 찾아서 selectedGinkoModel에 설정합니다.
+DropDownChoice에 selectedGinkoModel을 전달하여 기본 선택 값을 설정합니다.
+HTML 마크업:
+
+DropDownChoice가 렌더링될 select 요소를 정의합니다.
+이 코드는 은행 목록을 DropDownChoice로 표시하고, 특정 사용자의 은행 코드에 따라 기본 선택 옵션을 설정합니다. 
+DropDownChoice는 NamePair 객체의 ginkoCode와 ginkoName을 결합하여 표시합니다. 
+Model을 사용하여 기본 선택 값을 설정함으로써, Wicket은 자동으로 해당 값을 선택된 상태로 표시합니다.
