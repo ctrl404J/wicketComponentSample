@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.mapper.MyPageMapper">
+    <resultMap id="MyPageBeanResultMap" type="com.example.bean.MyPageBean">
+        <association property="keiyaku" javaType="com.example.entity.Keiyaku">
+            <id column="keiyaku_no" property="keiyakuNo"/>
+            <result column="keiyaku_name" property="keiyakuName"/>
+        </association>
+        <association property="tKoza" javaType="com.example.entity.TKoza">
+            <result column="koza_name" property="kozaName"/>
+        </association>
+    </resultMap>
+
+    <select id="getKeiyakuInfo" resultMap="MyPageBeanResultMap">
+        SELECT 
+            k.keiyaku_no AS keiyaku_no,
+            k.keiyaku_name AS keiyaku_name,
+            t.koza_name AS koza_name
+        FROM 
+            keiyaku k
+        LEFT JOIN 
+            t_koza t ON k.koza_id = t.koza_id
+        WHERE 
+            k.keiyaku_no = #{keiyakuNo}
+    </select>
+</mapper>
