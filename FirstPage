@@ -1,0 +1,49 @@
+//첫 페이지
+
+public class FirstPage extends WebPage {
+    private MyBean myBean;
+
+    public FirstPage(MyBean myBean) {
+        this.myBean = myBean;
+        setDefaultModel(new CompoundPropertyModel<>(myBean));
+
+        Form<?> form = new Form<Void>("form") {
+            @Override
+            protected void onSubmit() {
+                setResponsePage(new NextPage(myBean));
+            }
+        };
+
+        List<String> choices = Arrays.asList("Option 1", "Option 2", "Option 3");
+        DropDownChoice<String> dropdown = new DropDownChoice<>("selectedValue", choices);
+        form.add(dropdown);
+        add(form);
+    }
+}
+
+//두번째 페이지
+import org.apache.wicket.markup.html.WebPage;
+import org.apache.wicket.markup.html.form.Form;
+import org.apache.wicket.model.Model;
+
+public class NextPage extends WebPage {
+    private MyBean myBean;
+
+    public NextPage(MyBean myBean) {
+        this.myBean = myBean;
+
+        Form<?> form = new Form<Void>("form") {
+            @Override
+            protected void onSubmit() {
+                setResponsePage(new FirstPage(myBean));
+            }
+        };
+
+        add(form);
+    }
+}
+; 주요 포인트
+; CompoundPropertyModel 사용: 이는 myBean의 속성에 자동으로 바인딩되어 DropDownChoice의 값을 유지합니다.
+; 모델 바인딩: DropDownChoice에 selectedValue를 바인딩하여 사용자가 선택한 값을 myBean에 저장합니다.
+; 페이지 전환: myBean을 다음 페이지로 전달하여 상태를 유지하고, 다시 첫 페이지로 돌아올 때도 동일한 myBean을 사용합니다.
+; 이렇게 하면 FirstPage의 DropDownChoice가 사용자가 선택한 값을 유지하게 됩니다.
